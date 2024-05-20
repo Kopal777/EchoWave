@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import io from 'socket.io-client';
 import Chat from './Chat';
+import './App.css';
+import picture from './assets/communication.png'
 
 const socket = io.connect("http://localhost:3001")
 
@@ -18,22 +20,31 @@ function App() {
   }
 
   return (
-    <div className='text-center mt-10'>
+    <div className='bg-[#cdabef] h-screen'>
+
       {!showChat ? (
         <div>
-          <h3 className='text-3xl mb-5 font-semibold'>Join chat</h3>
-          <div className='flex flex-col'>
-            <div>
-              <input className='border-2 my-2 p-2 w-2/5' type="text" placeholder='Username' onChange={(e) => { setUsername(e.target.value) }} />
-            </div>
-            <div>
-              <input className='border-2 my-2 p-2 w-2/5' type="text" placeholder='Room ID' onChange={(e) => { setRoom(e.target.value) }} />
-            </div>
-            <div>
-              <button className='border-2 my-2 bg-green-400 p-2 w-2/5' onClick={joinRoom}>Join Room</button>
-            </div>
+          <div className='flex items-center font-bold text-3xl bg-[#dbc0f4] p-1.5'>
+            <img className='w-14 h-14 mx-2' src={picture} alt="" />
+            <h3>Echo</h3>
+            <h3 className='text-white'>Wave</h3>
+          </div>
+          <h1 class='heading1'>EchoWave</h1>
+          <h2 class='heading2'>Where Conversations Flow</h2>
+          <div class="cont">
+            <form action="" class="form_main">
+              <p class="heading">Chat Room</p>
+              <div class="inputContainer">
+                <input type="text" class="inputField" id="username" onChange={(e) => { setUsername(e.target.value) }} placeholder="Username" />
+              </div>
+              <div class="inputContainer">
+                <input type="text" class="inputField" id="password" onChange={(e) => { setRoom(e.target.value) }} placeholder="Room ID" />
+              </div>
+              <button onClick={joinRoom} id="button">Join</button>
+            </form>
           </div>
         </div>
+
       ) : (
         <div>
           <Chat socket={socket} username={username} room={room} />
