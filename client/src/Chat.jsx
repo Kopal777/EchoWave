@@ -83,18 +83,13 @@ function Chat({ socket, username, room }) {
     }, [])
 
     const disconnectUser = () => {
-        console.log("hello :)")
+        socket.emit("disconnect");
     }
 
-    const handleCopy = ({room}) => {
-        const textToCopy = room;
-        navigator.clipboard.writeText(textToCopy)
-            .then(() => {
-                alert('Text copied to clipboard!');
-            })
-            .catch((err) => {
-                console.error('Failed to copy text: ', err);
-            });
+    const handleCopy = () => {
+        console.log(room);
+        navigator.clipboard.writeText(room);
+        alert("Copied the text: " + room);
     }
 
     return (
@@ -109,14 +104,17 @@ function Chat({ socket, username, room }) {
             <div className='bg-white'>
 
                 <div className='bg-[#9d79bf] mb-4 flex justify-between'>
-                    <h2 className='text-2xl flex p-5 rounded-md text-white font-semibold'>
-                        Room {room}
+                    <h2 className='text-2xl flex p-4 rounded-md text-white font-bold'>
+                        Room 
+                        <h2 className='px-2 text-[#6e1846]'>{room}</h2>
                     </h2>
                     <div className='flex items-center'>
-                        <div onClick={handleCopy(room)} className='text-white bg-[#361657] rounded-full cursor-pointer hover:bg-[#0d5b36]'>
+                        <button onClick={handleCopy} className='text-white bg-[#361657] rounded-full cursor-pointer hover:bg-[#0d5b36]'>
                             <IoCopyOutline style={{ width: "46px", height: "46px", padding: "10px" }} />
-                        </div>
-                        <img onClick={disconnectUser} className='w-12 h-12 mr-5 ml-3 bg-[#361657] hover:bg-[#b00808] p-2 rounded-full cursor-pointer' src={disconnect} alt="" />
+                        </button>
+                        <button onClick={disconnectUser}>
+                            <img className='w-12 h-12 mr-5 ml-3 bg-[#361657] hover:bg-[#b00808] p-2 rounded-full cursor-pointer' src={disconnect} alt="" />
+                        </button>
                     </div>
                 </div>
 
@@ -181,11 +179,11 @@ function Chat({ socket, username, room }) {
                         onKeyDown={(event) => {
                             event.key === "Enter" && sendMessage()
                         }}
-                        className='p-2 grow mx-2 bg-gray-200'
+                        className='p-2 w-2/3 mx-2 bg-gray-200 outline-none'
                         type="text" placeholder='Type a message'
                         onChange={(e) => { setMsg(e.target.value) }}
                     />
-                    <button className='p-2 flex-none' onClick={sendMessage}>
+                    <button className='p-1 flex-none' onClick={sendMessage}>
                         <IoSend style={{ fontSize: "40px", padding: "5px" }} />
                     </button>
                 </div>
