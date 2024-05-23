@@ -18,6 +18,9 @@ const io = new Server(server, {
 io.on("connection", (socket)=>{
     console.log(`User Connected - ${socket.id}`);
 
+    const { username, room } = socket.handshake.query;
+    console.log("User Info:", username, room);
+
     socket.on("join_room", (data)=>{
         socket.join(data);
         console.log(`User with ID-${socket.id} has joined Room ${data}`)
