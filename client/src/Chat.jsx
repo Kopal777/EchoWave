@@ -15,8 +15,7 @@ import { useParams } from 'react-router-dom';
 function Chat() {
 
     let { socket, username, room } = useParams();
-    const url = "http://localhost:3001/"
-    socket = io(url, {
+    socket = io("http://localhost:3001/", {
         query: { username, room }
     })
 

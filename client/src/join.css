@@ -7,11 +7,6 @@
     top: 18%;
     transform: translate(35%, -30%);
 }
-/* .myheadings{
-  position: relative;
-  top: 0%;
-  transform: translate(35%, -30%);
-} */
 .heading2{
     font-size: xx-large;
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
@@ -34,7 +29,6 @@
     box-shadow: 0px 0px 40px rgba(0, 0, 0, 0.062);
     position: relative;
     overflow: hidden;
-
     border-radius: 1rem;
   }
   
