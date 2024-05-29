@@ -3,6 +3,7 @@ const  app = express();
 const http = require('http');
 const { Server } = require('socket.io');
 const cors = require('cors');
+const {addUser, getUsersInRoom} = require('./actions');
 
 const server = http.createServer(app);
  
@@ -17,14 +18,25 @@ const io = new Server(server, {
 
 io.on("connection", (socket)=>{
     console.log(`User Connected - ${socket.id}`);
+    const socketUserData = new Map();
 
-    const { username, room } = socket.handshake.query;
-    console.log("User Info:", username, room);
 
     socket.on("join_room", (data)=>{
-        socket.join(data);
-        console.log(`User with ID-${socket.id} has joined Room ${data}`)
+        const {username, room} = data;
+        socket.join(data.room);
+        console.log(`User with ID-${socket.id} has joined Room ${data.room}`)
+        socketUserData.set(socket.id, {socketId: socket.id, username, room });
+        const user = addUser(socket.id, username, room)
+
+        console.log("Room", room)
+
+        io.to(room).emit('allUsersData', {
+            room: room,
+            users: getUsersInRoom(room)
+        })
     })
+
+    
 
     socket.on("send_message", (data)=>{
         socket.to(data.room).emit("recieve_message", data)
