@@ -19,6 +19,7 @@ function Chat({ socket, username, room }) {
     const [users, setUsers] = useState([]);
     const inputRef = useRef(null);
     const [msg, setMsg] = useState("");
+    const [imageSrc, setImageSrc] = useState("");
     const [messageList, setMessageList] = useState([]);
 
     const handleEmojiShow = (e) => {
@@ -52,6 +53,7 @@ function Chat({ socket, username, room }) {
                     mimeType: file.type,
                     fileName: file.name
                 }
+                console.log(":)", file)
                 setMsg("");
                 setFile();
                 await socket.emit("send_message", messageData);
@@ -59,25 +61,29 @@ function Chat({ socket, username, room }) {
             else {
                 const messageData = {
                     username: username,
+                    type: "text",
+                    body: msg,
                     room: room,
                     time: new Date(Date.now()).getHours() + ":" + new Date(Date.now()).getMinutes(),
                     message: msg
                 }
+                console.log(":(")
                 await socket.emit("send_message", messageData);
                 setMessageList((list) => [...list, messageData]);
                 setMsg("");
             }
+
         }
     }
 
     const selectFile = (e) => {
-        if (typeof e.target.value[0] != "undefined") {
-            setMsg(e.target.files[0].name);
+        const selectedFile = e.target.files[0];
+        if (selectedFile) {
+            setMsg(selectedFile.name);
             setFile(e.target.files[0]);
-        }
-        else {
-            return null;
-        }
+        } else {
+            setFile(null);
+        }   
     }
 
     useEffect(() => {
@@ -87,6 +93,7 @@ function Chat({ socket, username, room }) {
     }, [])
 
     const disconnectUser = () => {
+        window.location.reload();
         socket.emit("disconnect");
     }
 
@@ -103,7 +110,7 @@ function Chat({ socket, username, room }) {
                     <HiMiniUserGroup style={{ fontSize: "40px", marginRight: "8px" }} />
                     Active Members
                 </div>
-                <ActiveUsers users={users}/>
+                <ActiveUsers users={users} />
             </div>
 
             <div style={{ backgroundImage: `url(${wallpaper})` }} className='bg-white lg:w-full w-screen'>
@@ -173,11 +180,12 @@ function Chat({ socket, username, room }) {
                     <button onClick={handleEmojiShow} className='flex-none px-1'>
                         <FaRegSmile style={{ fontSize: "40px", padding: "5px", color: "#3b3b3b" }} />
                     </button>
-                    <label htmlFor="file-input" className='flex-none pr-1 cursor-pointer'>
-                        <div>
-                            <FiPaperclip style={{ fontSize: "36px", padding: "5px", color: "#3b3b3b" }} />
-                        </div>
+
+                    <label className='cursor-pointer flex items-center justify-center border bg-transparent rounded-2xl text-gray-600 p-2'>
+                        <input multiple type="file" className='hidden' onChange={selectFile} />
+                        <div className='mr-1 text-[28px] text-[#3b3b3b]'><FiPaperclip /></div>
                     </label>
+
                     <input
                         ref={inputRef}
                         value={msg}
@@ -185,7 +193,8 @@ function Chat({ socket, username, room }) {
                             event.key === "Enter" && sendMessage()
                         }}
                         className='p-2 w-[87%] mx-2 bg-gray-200 outline-none'
-                        type="text" placeholder='Type a message'
+                        type="text"
+                        placeholder='Type a message'
                         onChange={(e) => { setMsg(e.target.value) }}
                     />
                     <button className='p-1 flex-none' onClick={sendMessage}>
@@ -197,93 +206,6 @@ function Chat({ socket, username, room }) {
 
         </div>
 
-
-
-        // <div className='mt-10 text-center flex flex-col items-center'>
-        //     <div className='text-3xl w-2/4 p-1 rounded-md bg-slate-800 text-white font-semibold'>
-        //         Live Chat
-        //     </div>
-        //     <div className='border-2 rounded-md w-2/4'>
-        //         <div className='border-b-2 h-[500px] p-2'>
-        //             <ScrollToBottom className='h-[500px]'>
-        //                 {messageList.map((messageContent) => {
-        //                     if (username == messageContent.username) {
-        //                         return <div className='m-1 mb-4 ml-6'>
-        //                             <div className='flex justify-end'>
-        //                                 <div className='border rounded-l-lg rounded-tr-lg p-1 px-2  bg-green-600 '>
-        //                                     {messageContent.message}
-        //                                 </div>
-        //                             </div>
-        //                             <div className='flex gap-2 justify-end text-xs text-slate-500'>
-        //                                 <div>
-        //                                     {messageContent.time}
-        //                                 </div>
-        //                                 <div>
-        //                                     You
-        //                                 </div>
-        //                             </div>
-        //                         </div>
-        //                     }
-        //                     else {
-        //                         return <div className='m-1 mb-4 mr-6'>
-        //                             <div className='border rounded-t-lg rounded-br-lg p-1 px-2 w-fit bg-blue-600 '>
-        //                                 {messageContent.message}
-        //                             </div>
-        //                             <div className='flex gap-2 text-xs text-slate-500'>
-        //                                 <div>
-        //                                     {messageContent.time}
-        //                                 </div>
-        //                                 <div>
-        //                                     {messageContent.username}
-        //                                 </div>
-        //                             </div>
-        //                         </div>
-        //                     }
-
-        //                 })}
-        //             </ScrollToBottom>
-
-        //         </div>
-
-        //         {showEmoji && (
-        //             <div onKeyDown={handleKeyDown} ref={ref} className='fixed bottom-24'>
-        //                 <Picker onEmojiSelect={handleEmojiSelect} emojiSize={30} />
-        //             </div>
-        //         )}
-
-        //         <div className='flex items-center justify-between w-full'>
-        //             <div className='flex'>
-        //                 <div>
-        //                     <button onClick={handleEmojiShow}>
-        //                         <FaRegSmile style={{ fontSize: "40px", padding: "5px" }} />
-        //                     </button>
-        //                 </div>
-        //                 <label htmlFor="file-input">
-        //                     <div>
-        //                         <FiPaperclip style={{ fontSize: "36px", padding: "5px" }} />
-        //                     </div>
-        //                 </label>
-        //                 <div className='flex-grow mx-2'>
-        //                     <input
-        //                         ref={inputRef}
-        //                         value={msg}
-        //                         onKeyDown={(event) => {
-        //                             event.key === "Enter" && sendMessage()
-        //                         }}
-        //                         className='p-2 outline-none'
-        //                         type="text" placeholder='Type a message'
-        //                         onChange={(e) => { setMsg(e.target.value) }} />
-        //                 </div>
-        //             </div>
-
-        //             <div>
-        //                 <button className='p-2' onClick={sendMessage}>
-        //                     <IoSend style={{ fontSize: "30px" }} />
-        //                 </button>
-        //             </div>
-        //         </div>
-        //     </div>
-        // </div>
     )
 }
 

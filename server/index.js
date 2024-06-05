@@ -3,7 +3,7 @@ const  app = express();
 const http = require('http');
 const { Server } = require('socket.io');
 const cors = require('cors');
-const {addUser, getUsersInRoom} = require('./actions');
+const {addUser, getUsersInRoom, removeUser} = require('./actions');
 
 const server = http.createServer(app);
  
@@ -22,21 +22,19 @@ io.on("connection", (socket)=>{
 
 
     socket.on("join_room", (data)=>{
+
         const {username, room} = data;
         socket.join(data.room);
         console.log(`User with ID-${socket.id} has joined Room ${data.room}`)
         socketUserData.set(socket.id, {socketId: socket.id, username, room });
         const user = addUser(socket.id, username, room)
 
-        console.log("Room", room)
-
         io.to(room).emit('allUsersData', {
             room: room,
             users: getUsersInRoom(room)
         })
-    })
 
-    
+    })
 
     socket.on("send_message", (data)=>{
         socket.to(data.room).emit("recieve_message", data)
@@ -44,6 +42,11 @@ io.on("connection", (socket)=>{
 
     socket.on("disconnect", ()=> {
         console.log("User disconnected", socket.id);
+        // const user = removeUser(socket.id);
+        // io.to(socketUserData.get(socket.id).room).emit('allUsersData', {
+        //     room: room,
+        //     users: getUsersInRoom(socketUserData.get(socket.id).room)
+        // })
     })
 })
 server.listen(3001, ()=>{

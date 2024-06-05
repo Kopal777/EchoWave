@@ -2,7 +2,6 @@ import React from 'react'
 import { FaCircle } from "react-icons/fa";
 
 function ActiveUsers({ users }) {
-    console.log("chlorine", users);
 
     return (
         <div>
