@@ -47,16 +47,17 @@ function Chat({ socket, username, room }) {
             if (file) {
                 const messageData = {
                     username: username,
+                    room: room,
                     type: "file",
                     body: file,
                     time: new Date(Date.now()).getHours() + ":" + new Date(Date.now()).getMinutes(),
                     mimeType: file.type,
                     fileName: file.name
                 }
-                console.log(":)", file)
+                await socket.emit("send_message", messageData);
+                setMessageList((list) => [...list, messageData]);
                 setMsg("");
                 setFile();
-                await socket.emit("send_message", messageData);
             }
             else {
                 const messageData = {
@@ -67,7 +68,6 @@ function Chat({ socket, username, room }) {
                     time: new Date(Date.now()).getHours() + ":" + new Date(Date.now()).getMinutes(),
                     message: msg
                 }
-                console.log(":(")
                 await socket.emit("send_message", messageData);
                 setMessageList((list) => [...list, messageData]);
                 setMsg("");
@@ -83,14 +83,14 @@ function Chat({ socket, username, room }) {
             setFile(e.target.files[0]);
         } else {
             setFile(null);
-        }   
+        }
     }
 
     useEffect(() => {
         socket.off("recieve-message").on("recieve_message", (data) => {
             setMessageList((list) => [...list, data]);
         })
-    }, [])
+    }, [socket])
 
     const disconnectUser = () => {
         window.location.reload();
@@ -131,12 +131,56 @@ function Chat({ socket, username, room }) {
                 </div>
 
                 <ScrollToBottom className='lg:h-[480px] h-[750px]'>
+
                     {messageList.map((messageContent) => {
+                        if (messageContent.type === "file") {
+
+                            const reader = new FileReader();
+                            const blob = new Blob([messageContent.body], { type: messageContent.type });
+                            reader.readAsDataURL(blob);
+                            reader.onloadend = function () {
+                                setImageSrc(reader.result);
+                            }
+
+                            if (messageContent.username == username) {
+                                return <div className='m-1 mb-2 ml-[220px]'>
+                                    <div className='flex justify-end'>
+                                        <div className='rounded-l-lg text-left rounded-tr-lg p-2 px-3 text-white bg-[#361657]'>
+                                            <img className='h-auto w-52' src={imageSrc} alt="" />
+                                        </div>
+                                    </div>
+                                    <div className='flex gap-2 justify-end text-xs text-slate-500'>
+                                        <div>
+                                            {messageContent.time}
+                                        </div>
+                                        <div>
+                                            You
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            else {
+                                return <div className='m-1 mb-2 mr-[220px]'>
+                                    <div className='border rounded-t-lg text-left rounded-br-lg p-1 px-2 w-fit bg-[#bd8bee]'>
+                                        <img className='h-auto w-52' src={imageSrc} alt="" />
+                                    </div>
+                                    <div className='flex gap-2 text-xs text-slate-500'>
+                                        <div>
+                                            {messageContent.time}
+                                        </div>
+                                        <div>
+                                            {messageContent.username}
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        
+                        }
                         if (username == messageContent.username) {
                             return <div className='m-1 mb-2 ml-[220px]'>
                                 <div className='flex justify-end'>
                                     <div className='rounded-l-lg text-left rounded-tr-lg p-2 px-3 text-white bg-[#361657]'>
-                                        {messageContent.message}
+                                        {messageContent.body}
                                     </div>
                                 </div>
                                 <div className='flex gap-2 justify-end text-xs text-slate-500'>
@@ -150,6 +194,7 @@ function Chat({ socket, username, room }) {
                             </div>
                         }
                         else {
+
                             return <div className='m-1 mb-2 mr-[220px]'>
                                 <div className='border rounded-t-lg text-left rounded-br-lg p-1 px-2 w-fit bg-[#bd8bee]'>
                                     {messageContent.message}
@@ -180,12 +225,10 @@ function Chat({ socket, username, room }) {
                     <button onClick={handleEmojiShow} className='flex-none px-1'>
                         <FaRegSmile style={{ fontSize: "40px", padding: "5px", color: "#3b3b3b" }} />
                     </button>
-
                     <label className='cursor-pointer flex items-center justify-center border bg-transparent rounded-2xl text-gray-600 p-2'>
                         <input multiple type="file" className='hidden' onChange={selectFile} />
                         <div className='mr-1 text-[28px] text-[#3b3b3b]'><FiPaperclip /></div>
                     </label>
-
                     <input
                         ref={inputRef}
                         value={msg}
@@ -201,7 +244,6 @@ function Chat({ socket, username, room }) {
                         <IoSend style={{ fontSize: "40px", padding: "5px" }} />
                     </button>
                 </div>
-
             </div>
 
         </div>
