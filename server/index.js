@@ -39,12 +39,16 @@ io.on("connection", (socket)=>{
     socket.on("send_message", (data)=>{
         console.log("Send message", data)
         socket.to(data.room).emit("recieve_message", data)
+        console.log("hello",socketUserData.get(socket.id).room)
         
     })
 
     socket.on("disconnect", ()=> {
         console.log("User disconnected", socket.id);
-        // const user = removeUser(socket.id);
+        const user = removeUser(socket.id);
+        const buser = socketUserData.get(socket.id);
+        const {room} = buser;
+        console.log(`sssssss ${room}`)
         // io.to(socketUserData.get(socket.id).room).emit('allUsersData', {
         //     room: room,
         //     users: getUsersInRoom(socketUserData.get(socket.id).room)

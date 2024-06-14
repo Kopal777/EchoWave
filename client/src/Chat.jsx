@@ -177,6 +177,7 @@ function Chat({ socket, username, room }) {
                         
                         }
                         if (username == messageContent.username) {
+                            console.log("<<<<<")
                             return <div className='m-1 mb-2 ml-[220px]'>
                                 <div className='flex justify-end'>
                                     <div className='rounded-l-lg text-left rounded-tr-lg p-2 px-3 text-white bg-[#361657]'>
@@ -194,7 +195,7 @@ function Chat({ socket, username, room }) {
                             </div>
                         }
                         else {
-
+                            console.log(">>>>>")
                             return <div className='m-1 mb-2 mr-[220px]'>
                                 <div className='border rounded-t-lg text-left rounded-br-lg p-1 px-2 w-fit bg-[#bd8bee]'>
                                     {messageContent.message}
