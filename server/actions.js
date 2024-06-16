@@ -18,12 +18,13 @@ function removeUser(id){
 
     const index = users.findIndex((user)=> user.id === id);
     if (index !== -1){
-        return users.splice(index, 1)[0]
+        const removedUser = users.splice(index, 1)[0];
+        console.log("Remaining users:", users);
+        return removedUser;
     }
 }
 
 function getUsersInRoom(room){
-    console.log(users.filter((user)=> user.room === room));
     return users.filter((user)=> user.room === room)
 }
 

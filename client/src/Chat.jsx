@@ -145,16 +145,16 @@ function Chat({ socket, username, room }) {
                             if (messageContent.username == username) {
                                 return <div className='m-1 mb-2 ml-[220px]'>
                                     <div className='flex justify-end'>
-                                        <div className='rounded-l-lg text-left rounded-tr-lg p-2 px-3 text-white bg-[#361657]'>
-                                            <img className='h-auto w-52' src={imageSrc} alt="" />
-                                        </div>
-                                    </div>
-                                    <div className='flex gap-2 justify-end text-xs text-slate-500'>
-                                        <div>
-                                            {messageContent.time}
-                                        </div>
-                                        <div>
-                                            You
+                                        <div className='rounded-l-lg text-left rounded-tr-lg p-2 px-3 text-white bg-[#3f1965]'>
+                                            <img className='h-auto w-64' src={imageSrc} alt="" />
+                                            <div className='flex justify-between gap-2 text-xs text-slate-300'>
+                                                <div>
+                                                    ~You
+                                                </div>
+                                                <div>
+                                                    {messageContent.time}
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -162,35 +162,36 @@ function Chat({ socket, username, room }) {
                             else {
                                 return <div className='m-1 mb-2 mr-[220px]'>
                                     <div className='border rounded-t-lg text-left rounded-br-lg p-1 px-2 w-fit bg-[#bd8bee]'>
-                                        <img className='h-auto w-52' src={imageSrc} alt="" />
-                                    </div>
-                                    <div className='flex gap-2 text-xs text-slate-500'>
-                                        <div>
-                                            {messageContent.time}
-                                        </div>
-                                        <div>
-                                            {messageContent.username}
+                                        <img className='h-auto w-64' src={imageSrc} alt="" />
+                                        <div className='flex justify-between gap-2 text-xs text-gray-600'>
+                                            <div>
+                                                ~{messageContent.username}
+                                            </div>
+                                            <div>
+                                                {messageContent.time}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             }
-                        
+
                         }
                         if (username == messageContent.username) {
                             console.log("<<<<<")
                             return <div className='m-1 mb-2 ml-[220px]'>
                                 <div className='flex justify-end'>
-                                    <div className='rounded-l-lg text-left rounded-tr-lg p-2 px-3 text-white bg-[#361657]'>
+                                    <div className='rounded-l-lg text-left rounded-tr-lg p-2 px-4 text-white bg-[#3f1965]'>
                                         {messageContent.body}
+                                        <div className='flex justify-between gap-2 text-xs text-slate-300'>
+                                            <div>
+                                                ~You
+                                            </div>
+                                            <div>
+                                                {messageContent.time}
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div className='flex gap-2 justify-end text-xs text-slate-500'>
-                                    <div>
-                                        {messageContent.time}
-                                    </div>
-                                    <div>
-                                        You
-                                    </div>
+
                                 </div>
                             </div>
                         }
@@ -199,13 +200,13 @@ function Chat({ socket, username, room }) {
                             return <div className='m-1 mb-2 mr-[220px]'>
                                 <div className='border rounded-t-lg text-left rounded-br-lg p-1 px-2 w-fit bg-[#bd8bee]'>
                                     {messageContent.message}
-                                </div>
-                                <div className='flex gap-2 text-xs text-slate-500'>
-                                    <div>
-                                        {messageContent.time}
-                                    </div>
-                                    <div>
-                                        {messageContent.username}
+                                    <div className='flex justify-between gap-2 text-xs text-gray-600'>
+                                        <div>
+                                            ~{messageContent.username}
+                                        </div>
+                                        <div>
+                                            {messageContent.time}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
