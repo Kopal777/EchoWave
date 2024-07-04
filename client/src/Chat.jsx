@@ -10,6 +10,7 @@ import wallpaper from './assets/wallpaper.png';
 import Picker from '@emoji-mart/react'
 import useOutsideClick from './hooks/useOutsideClick';
 import ActiveUsers from './ActiveUsers';
+import { v4 as uuidv4 } from 'uuid';
 
 
 function Chat({ socket, username, room }) {
@@ -21,6 +22,7 @@ function Chat({ socket, username, room }) {
     const [msg, setMsg] = useState("");
     const [imageSrc, setImageSrc] = useState("");
     const [messageList, setMessageList] = useState([]);
+    const [imageSources, setImageSources] = useState({}); 
 
     const handleEmojiShow = (e) => {
         e.preventDefault();
@@ -45,19 +47,24 @@ function Chat({ socket, username, room }) {
     const sendMessage = async () => {
         if (msg !== "") {
             if (file) {
+                const messageId = uuidv4();
                 const messageData = {
+                    id: messageId,
                     username: username,
                     room: room,
                     type: "file",
                     body: file,
                     time: new Date(Date.now()).getHours() + ":" + new Date(Date.now()).getMinutes(),
                     mimeType: file.type,
-                    fileName: file.name
+                    fileName: file.name,
+                    imageSource: URL.createObjectURL(file)
                 }
                 await socket.emit("send_message", messageData);
                 setMessageList((list) => [...list, messageData]);
+                setImageSources((prevImageSources) => ({ ...prevImageSources, [messageId]: messageData.imageSource }));
                 setMsg("");
                 setFile();
+                console.log("!!!!", messageData)
             }
             else {
                 const messageData = {
@@ -89,6 +96,7 @@ function Chat({ socket, username, room }) {
     useEffect(() => {
         socket.off("recieve-message").on("recieve_message", (data) => {
             setMessageList((list) => [...list, data]);
+            console.log("....", data)
         })
     }, [socket])
 
@@ -130,23 +138,17 @@ function Chat({ socket, username, room }) {
                     </div>
                 </div>
 
-                <ScrollToBottom className='lg:h-[480px] h-[750px]'>
+                <ScrollToBottom className='lg:h-[500px] h-[525px]'>
 
                     {messageList.map((messageContent) => {
+                        const imageSource = imageSources[messageContent.id];
                         if (messageContent.type === "file") {
-
-                            const reader = new FileReader();
-                            const blob = new Blob([messageContent.body], { type: messageContent.type });
-                            reader.readAsDataURL(blob);
-                            reader.onloadend = function () {
-                                setImageSrc(reader.result);
-                            }
-
                             if (messageContent.username == username) {
+                                console.log("banana", imageSource);
                                 return <div className='m-1 mb-2 ml-[220px]'>
                                     <div className='flex justify-end'>
                                         <div className='rounded-l-lg text-left rounded-tr-lg p-2 px-3 text-white bg-[#3f1965]'>
-                                            <img className='h-auto w-64' src={imageSrc} alt="" />
+                                            <img className='h-auto w-[450px]' src={imageSource} alt="" />
                                             <div className='flex justify-between gap-2 text-xs text-slate-300'>
                                                 <div>
                                                     ~You
@@ -160,9 +162,10 @@ function Chat({ socket, username, room }) {
                                 </div>
                             }
                             else {
+                                console.log("aaaaaa", messageContent.imageSource);
                                 return <div className='m-1 mb-2 mr-[220px]'>
                                     <div className='border rounded-t-lg text-left rounded-br-lg p-1 px-2 w-fit bg-[#bd8bee]'>
-                                        <img className='h-auto w-64' src={imageSrc} alt="" />
+                                        <img className='h-auto w-[450px]' src={messageContent.imageSource} alt="" />
                                         <div className='flex justify-between gap-2 text-xs text-gray-600'>
                                             <div>
                                                 ~{messageContent.username}
@@ -174,10 +177,9 @@ function Chat({ socket, username, room }) {
                                     </div>
                                 </div>
                             }
-
                         }
                         if (username == messageContent.username) {
-                            console.log("<<<<<")
+                            console.log("message in");
                             return <div className='m-1 mb-2 ml-[220px]'>
                                 <div className='flex justify-end'>
                                     <div className='rounded-l-lg text-left rounded-tr-lg p-2 px-4 text-white bg-[#3f1965]'>
@@ -196,7 +198,7 @@ function Chat({ socket, username, room }) {
                             </div>
                         }
                         else {
-                            console.log(">>>>>")
+                            console.log("message out");
                             return <div className='m-1 mb-2 mr-[220px]'>
                                 <div className='border rounded-t-lg text-left rounded-br-lg p-1 px-2 w-fit bg-[#bd8bee]'>
                                     {messageContent.message}

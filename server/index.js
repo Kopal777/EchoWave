@@ -45,13 +45,9 @@ io.on("connection", (socket)=>{
     socket.on("disconnect", ()=> {
         console.log("User disconnected", socket.id);
         const user = removeUser(socket.id);
-        const {room} = user;
-        console.log("kopal", room)
-
-        // const {username} = buser;
-        io.to(room).emit('allUsersData', {
-            room: room,
-            users: getUsersInRoom(room)
+        io.to(user.room).emit('allUsersData', {
+            room: user.room,
+            users: getUsersInRoom(user.room)
         })
     })
 })
