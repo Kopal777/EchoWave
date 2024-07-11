@@ -113,6 +113,9 @@ function Chat({ socket, username, room }) {
 
     return (
         <div className='grid grid-cols-2 md:grid-cols-[0.65fr_2fr] h-screen'>
+
+            {/* Active Members */}
+
             <div className='bg-gradient-to-b hidden md:block from-[#220d38] via-[#7f2287] to-[#551855]'>
                 <div className='text-2xl flex items-center p-6 text-white font-semibold'>
                     <HiMiniUserGroup style={{ fontSize: "40px", marginRight: "8px" }} />
@@ -122,6 +125,8 @@ function Chat({ socket, username, room }) {
             </div>
 
             <div style={{ backgroundImage: `url(${wallpaper})` }} className='bg-white lg:w-full w-screen'>
+
+                {/* Top Bar */}
 
                 <div className='bg-[#9d79bf] mb-4 flex justify-between'>
                     <h2 className='text-2xl flex p-4 rounded-md text-white font-bold'>
@@ -138,7 +143,8 @@ function Chat({ socket, username, room }) {
                     </div>
                 </div>
 
-                <ScrollToBottom className='lg:h-[500px] h-[525px]'>
+                {/* Chat Area */}
+                <ScrollToBottom className='lg:h-[500px] h-[765px]'>
 
                     {messageList.map((messageContent) => {
                         const imageSource = imageSources[messageContent.id];
@@ -213,10 +219,8 @@ function Chat({ socket, username, room }) {
                                 </div>
                             </div>
                         }
-
                     })}
                 </ScrollToBottom>
-
 
                 {showEmoji && (
                     <div onKeyDown={handleKeyDown} ref={ref} className='fixed bottom-20'>
@@ -224,6 +228,7 @@ function Chat({ socket, username, room }) {
                     </div>
                 )}
 
+                {/* Bottom Bar */}
 
                 <div className='flex fixed bottom-0 bg-gray-200 rounded-full m-2  items-center lg:w-[74%] w-[100%] '>
                     <button onClick={handleEmojiShow} className='flex-none px-1'>

@@ -45,10 +45,12 @@ io.on("connection", (socket)=>{
     socket.on("disconnect", ()=> {
         console.log("User disconnected", socket.id);
         const user = removeUser(socket.id);
-        io.to(user.room).emit('allUsersData', {
-            room: user.room,
-            users: getUsersInRoom(user.room)
-        })
+        if(user){
+            io.to(user.room).emit('allUsersData', {
+                room: user.room,
+                users: getUsersInRoom(user.room)
+            })
+        }
     })
 })
 server.listen(3001, ()=>{
