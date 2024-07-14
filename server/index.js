@@ -8,6 +8,7 @@ const {addUser, getUsersInRoom, removeUser} = require('./actions');
 const server = http.createServer(app);
  
 app.use(cors());
+const port = process.env.PORT || 3001;
 
 const io = new Server(server, {
     cors: {
@@ -56,6 +57,6 @@ io.on("connection", (socket)=>{
         }
     })
 })
-server.listen(3001, ()=>{
+server.listen(port, ()=>{
     console.log("Server running")
 })
