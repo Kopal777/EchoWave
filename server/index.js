@@ -11,7 +11,7 @@ app.use(cors());
 
 const io = new Server(server, {
     cors: {
-        origin: "http://localhost:5173",
+        origin: "https://echo-wave-2.vercel.app",
         methods: ["GET", "POST"]
     }
 });
