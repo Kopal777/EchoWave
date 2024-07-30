@@ -8,17 +8,13 @@ const {addUser, getUsersInRoom, removeUser} = require('./actions');
 const server = http.createServer(app);
  
 app.use(cors());
-const port = process.env.PORT || 3001;
 
 const io = new Server(server, {
     cors: {
-        origin: "https://echo-wave-2.vercel.app",
+        origin: "http://localhost:5173",
         methods: ["GET", "POST"]
     }
 });
-app.get('/', (req, res)=>{
-    res.json("hello");
-})
 
 io.on("connection", (socket)=>{
     console.log(`User Connected - ${socket.id}`);
@@ -57,6 +53,6 @@ io.on("connection", (socket)=>{
         }
     })
 })
-server.listen(port, ()=>{
+server.listen(3001, ()=>{
     console.log("Server running")
 })

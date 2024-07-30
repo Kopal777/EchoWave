@@ -5,7 +5,7 @@ import './App.css';
 import picture from './assets/communication.png';
 import picture2 from './assets/imageicon.png';
 
-const socket = io.connect("https://echo-wave-1.vercel.app")
+const socket = io.connect("http://localhost:3001")
 
 function App() {
 

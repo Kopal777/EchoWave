@@ -22,7 +22,7 @@ function Chat({ socket, username, room }) {
     const [msg, setMsg] = useState("");
     const [imageSrc, setImageSrc] = useState("");
     const [messageList, setMessageList] = useState([]);
-    const [imageSources, setImageSources] = useState({}); 
+    const [imageSources, setImageSources] = useState({});
 
     const handleEmojiShow = (e) => {
         e.preventDefault();
@@ -64,7 +64,7 @@ function Chat({ socket, username, room }) {
                 setImageSources((prevImageSources) => ({ ...prevImageSources, [messageId]: messageData.imageSource }));
                 setMsg("");
                 setFile();
-                console.log("!!!!", messageData)
+                console.log(messageData.mimeType);
             }
             else {
                 const messageData = {
@@ -144,20 +144,44 @@ function Chat({ socket, username, room }) {
                 </div>
 
                 {/* Chat Area */}
-                <ScrollToBottom className='lg:h-[500px] h-[765px]'>
+                <ScrollToBottom className='lg:h-[500px] h-[960px]'>
 
                     {messageList.map((messageContent) => {
                         const imageSource = imageSources[messageContent.id];
                         if (messageContent.type === "file") {
-                            if (messageContent.username == username) {
-                                console.log("banana", imageSource);
-                                return <div className='m-1 mb-2 ml-[220px]'>
-                                    <div className='flex justify-end'>
-                                        <div className='rounded-l-lg text-left rounded-tr-lg p-2 px-3 text-white bg-[#3f1965]'>
-                                            <img className='h-auto w-[450px]' src={imageSource} alt="" />
-                                            <div className='flex justify-between gap-2 text-xs text-slate-300'>
+
+
+                            if (messageContent.mimeType.startsWith('application/')) {
+                                if (messageContent.username == username) {
+                                    console.log(imageSource);
+                                    return <div className='m-1 mb-2 ml-[220px]'>
+                                        <div className='flex justify-end'>
+                                            <div className='rounded-l-lg text-left rounded-tr-lg p-2 px-3 text-white bg-[#3f1965]'>
+                                                <a className='text-blue-400 underline' href={messageContent.imageSource} download={messageContent.fileName}>
+                                                    {messageContent.fileName}
+                                                </a>
+                                                <div className='flex justify-between gap-2 text-xs text-slate-300'>
+                                                    <div>
+                                                        ~You
+                                                    </div>
+                                                    <div>
+                                                        {messageContent.time}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                else {
+                                    console.log("aaaaaa", messageContent.imageSource);
+                                    return <div className='m-1 mb-2 mr-[220px]'>
+                                        <div className='border rounded-t-lg text-left rounded-br-lg p-1 px-2 w-fit bg-[#bd8bee]'>
+                                                <a className='text-blue-700 underline' href={messageContent.imageSource} download={messageContent.fileName}>
+                                                    {messageContent.fileName}
+                                                </a>
+                                            <div className='flex justify-between gap-2 text-xs text-gray-600'>
                                                 <div>
-                                                    ~You
+                                                    ~{messageContent.username}
                                                 </div>
                                                 <div>
                                                     {messageContent.time}
@@ -165,25 +189,47 @@ function Chat({ socket, username, room }) {
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                }
                             }
-                            else {
-                                console.log("aaaaaa", messageContent.imageSource);
-                                return <div className='m-1 mb-2 mr-[220px]'>
-                                    <div className='border rounded-t-lg text-left rounded-br-lg p-1 px-2 w-fit bg-[#bd8bee]'>
-                                        <img className='h-auto w-[450px]' src={messageContent.imageSource} alt="" />
-                                        <div className='flex justify-between gap-2 text-xs text-gray-600'>
-                                            <div>
-                                                ~{messageContent.username}
-                                            </div>
-                                            <div>
-                                                {messageContent.time}
+
+
+                            else if (messageContent.mimeType.startsWith('image/')) {
+                                if (messageContent.username == username) {
+                                    return <div className='m-1 mb-2 ml-[220px]'>
+                                        <div className='flex justify-end'>
+                                            <div className='rounded-l-lg text-left rounded-tr-lg p-2 px-3 text-white bg-[#3f1965]'>
+                                                <img className='h-auto w-[450px]' src={imageSource} alt="" />
+                                                <div className='flex justify-between gap-2 text-xs text-slate-300'>
+                                                    <div>
+                                                        ~You
+                                                    </div>
+                                                    <div>
+                                                        {messageContent.time}
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                }
+                                else {
+                                    return <div className='m-1 mb-2 mr-[220px]'>
+                                        <div className='border rounded-t-lg text-left rounded-br-lg p-1 px-2 w-fit bg-[#bd8bee]'>
+                                            <img className='h-auto w-[450px]' src={messageContent.imageSource} alt="" />
+                                            <div className='flex justify-between gap-2 text-xs text-gray-600'>
+                                                <div>
+                                                    ~{messageContent.username}
+                                                </div>
+                                                <div>
+                                                    {messageContent.time}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
                             }
+
                         }
+
                         if (username == messageContent.username) {
                             console.log("message in");
                             return <div className='m-1 mb-2 ml-[220px]'>
